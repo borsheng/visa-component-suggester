@@ -1,0 +1,304 @@
+'use client';
+
+import { useState, useMemo } from 'react';
+import { ComponentName, detectComponents, componentSnippets } from '../lib/componentMapping';
+import { generateSnippet } from '../helpers/generateSnippet';
+import { CodeBlock } from '../components/CodeBlock';
+
+export default function Home() {
+  const [input, setInput] = useState('');
+
+  const suggestedComponents = useMemo(() => {
+    if (!input.trim()) return [];
+    return detectComponents(input);
+  }, [input]);
+
+  const codeSnippet = useMemo(() => {
+    if (suggestedComponents.length === 0) return '';
+    return generateSnippet(suggestedComponents);
+  }, [suggestedComponents]);
+
+  return (
+    <div style={{ 
+      maxWidth: '1200px', 
+      margin: '0 auto', 
+      padding: 'var(--size-scalable-32) var(--size-scalable-16)',
+      fontFamily: 'system-ui, -apple-system, sans-serif',
+      backgroundColor: '#f8f9fa',
+      minHeight: '100vh'
+    }}>
+      {/* Header */}
+      <div className="v-surface v-flex v-flex-col v-gap-4 v-align-items-center" style={{ 
+        textAlign: 'center', 
+        marginBottom: 'var(--size-scalable-48)',
+        padding: 'var(--size-scalable-32)',
+        borderRadius: 'var(--size-rounded-large)',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+      }}>
+        <h1 style={{ 
+          fontSize: '3rem',
+          fontWeight: '700',
+          background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          marginBottom: 'var(--size-scalable-16)'
+        }}>
+          🔧 Visa Component Suggester
+        </h1>
+        <p style={{
+          fontSize: '1.25rem',
+          color: '#6b7280',
+          maxWidth: '600px',
+          margin: '0 auto',
+          lineHeight: '1.6'
+        }}>
+          Describe your UI in natural language and get instant Visa Product Design System component suggestions with code snippets.
+        </p>
+      </div>
+      
+      {/* Input Section */}
+      <div className="v-surface v-flex v-flex-col v-gap-4" style={{ 
+        marginBottom: 'var(--size-scalable-32)',
+        padding: 'var(--size-scalable-32)',
+        borderRadius: 'var(--size-rounded-large)',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+      }}>
+        <label 
+          htmlFor="ui-input"
+          className="v-label"
+          style={{ 
+            display: 'block', 
+            marginBottom: 'var(--size-scalable-12)', 
+            fontSize: '1.125rem',
+            fontWeight: '600',
+            color: '#374151'
+          }}
+        >
+          Describe your UI:
+        </label>
+        <input
+          id="ui-input"
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="e.g., I need a responsive login form with remember me checkbox"
+          style={{
+            width: '100%',
+            padding: 'var(--size-scalable-16) var(--size-scalable-20)',
+            border: '2px solid #e5e7eb',
+            borderRadius: 'var(--size-rounded-medium)',
+            fontSize: '16px',
+            outline: 'none',
+            transition: 'all 0.2s ease',
+            boxSizing: 'border-box',
+            fontFamily: 'inherit'
+          }}
+          onFocus={(e) => {
+            ((e.target as HTMLElement).style).borderColor = '#3b82f6';
+            ((e.target as HTMLElement).style).boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
+          }}
+          onBlur={(e) => {
+            ((e.target as HTMLElement).style).borderColor = '#e5e7eb';
+            ((e.target as HTMLElement).style).boxShadow = 'none';
+          }}
+        />
+        
+        {/* Example suggestions */}
+        <div style={{ marginTop: 'var(--size-scalable-12)' }}>
+          <span style={{ 
+            fontSize: '14px', 
+            color: '#6b7280',
+            marginRight: 'var(--size-scalable-12)'
+          }}>
+            Try:
+          </span>
+          {[
+            'login form',
+            'user profile page', 
+            'admin dashboard',
+            'contact form',
+            'settings page'
+          ].map((example, index) => (
+            <button
+              key={index}
+              // className="v-action v-action-secondary"
+              onClick={() => setInput(example)}
+              style={{
+                border: '1px solid #e2e8f0',
+                borderRadius: 'var(--size-rounded-medium)',
+                padding: 'var(--size-scalable-4) var(--size-scalable-12)',
+                fontSize: '14px',
+                color: '#64748b',
+                cursor: 'pointer',
+                marginRight: 'var(--size-scalable-8)',
+                marginBottom: 'var(--size-scalable-4)',
+                transition: 'all 0.2s ease',
+                backgroundColor: '#f8fafc',
+                boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+              }}
+              onMouseEnter={(e) => {
+                ((e.target as HTMLElement).style).borderColor = '#3b82f6';
+                ((e.target as HTMLElement).style).color = '#3b82f6';
+                ((e.target as HTMLElement).style).backgroundColor = '#f0f9ff';
+                ((e.target as HTMLElement).style).boxShadow = '0 2px 4px rgba(59, 130, 246, 0.15)';
+              }}
+              onMouseLeave={(e) => {
+                ((e.target as HTMLElement).style).borderColor = '#e2e8f0';
+                ((e.target as HTMLElement).style).color = '#64748b';
+                ((e.target as HTMLElement).style).backgroundColor = '#f8fafc';
+                ((e.target as HTMLElement).style).boxShadow = '0 1px 2px rgba(0,0,0,0.05)';
+              }}
+            >
+              {example}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Results */}
+      {suggestedComponents.length > 0 && (
+        <div style={{ 
+          display: 'grid', 
+          gap: 'var(--size-scalable-24)', 
+          gridTemplateColumns: 'minmax(300px, 0.4fr) minmax(0, 1fr)',
+          width: '100%',
+          maxWidth: '100%',
+          overflow: 'hidden'
+        }}>
+          {/* Suggested Components */}
+          <div className="v-surface" style={{
+            padding: 'var(--size-scalable-24)',
+            borderRadius: 'var(--size-rounded-large)',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+          }}>
+            <h3 style={{ 
+              marginBottom: 'var(--size-scalable-16)',
+              color: '#374151',
+              fontSize: '1.25rem',
+              fontWeight: '600'
+            }}>
+              📦 Suggested Components
+            </h3>
+            <div className="v-flex v-flex-wrap v-gap-2">
+              {suggestedComponents.map((component, index) => (
+                <span
+                  key={index}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    padding: 'var(--size-scalable-8) var(--size-scalable-16)',
+                    backgroundColor: '#dbeafe',
+                    color: '#1e40af',
+                    borderRadius: 'var(--size-rounded-medium)',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    border: '1px solid #93c5fd',
+                    boxShadow: '0 2px 4px rgba(59, 130, 246, 0.1)'
+                  }}
+                >
+                  {component}
+                </span>
+              ))}
+            </div>
+            
+            {/* Quick info */}
+            <div style={{
+              marginTop: 'var(--size-scalable-16)',
+              padding: 'var(--size-scalable-12)',
+              backgroundColor: '#f8fafc',
+              borderRadius: 'var(--size-rounded-medium)',
+              border: '1px solid #e2e8f0'
+            }}>
+              <p style={{
+                margin: 0,
+                fontSize: '14px',
+                color: '#64748b',
+                lineHeight: '1.5'
+              }}>
+                💡 These components follow Visa Product Design System standards and include proper accessibility features.
+              </p>
+            </div>
+          </div>
+
+          {/* Generated Code */}
+          <div className="v-surface" style={{
+            padding: 'var(--size-scalable-24)',
+            borderRadius: 'var(--size-rounded-large)',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+          }}>
+            <h3 className="v-flex v-align-items-center v-gap-2" style={{ 
+              marginBottom: 'var(--size-scalable-16)',
+              color: '#374151',
+              fontSize: '1.25rem',
+              fontWeight: '600'
+            }}>
+              💻 Generated Code
+            </h3>
+            <CodeBlock code={codeSnippet} />
+            
+            {/* Usage instructions */}
+            <div style={{
+              marginTop: 'var(--size-scalable-16)',
+              padding: 'var(--size-scalable-12)',
+              backgroundColor: '#fefce8',
+              borderRadius: 'var(--size-rounded-medium)',
+              border: '1px solid #fde047'
+            }}>
+              <p style={{
+                margin: 0,
+                fontSize: '14px',
+                color: '#a16207',
+                lineHeight: '1.5'
+              }}>
+                ⚡ Ready to use! Copy the code above and paste it into your React component.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Welcome message when no input */}
+      {suggestedComponents.length === 0 && (
+        <div className="v-surface" style={{
+          textAlign: 'center',
+          padding: 'var(--size-scalable-48) var(--size-scalable-24)',
+          borderRadius: 'var(--size-rounded-large)',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+        }}>
+          <div style={{ fontSize: '4rem', marginBottom: 'var(--size-scalable-16)' }}>🎨</div>
+          <h3 style={{
+            fontSize: '1.5rem',
+            fontWeight: '600',
+            color: '#374151',
+            marginBottom: 'var(--size-scalable-8)'
+          }}>
+            Start describing your UI
+          </h3>
+          <p style={{
+            color: '#6b7280',
+            fontSize: '1.125rem',
+            maxWidth: '500px',
+            margin: '0 auto',
+            lineHeight: '1.6'
+          }}>
+            Type a description like &ldquo;login form&rdquo; or &ldquo;user dashboard&rdquo; and watch the magic happen!
+          </p>
+        </div>
+      )}
+
+      {/* Footer */}
+      <div style={{
+        marginTop: 'var(--size-scalable-48)',
+        textAlign: 'center',
+        padding: 'var(--size-scalable-24)',
+        color: '#6b7280',
+        fontSize: '14px'
+      }}>
+        <p style={{ margin: 0 }}>
+          Built with Eric Huang using <strong>Visa Product Design System</strong> • 
+          Supports 30+ components with accessibility features
+        </p>
+      </div>
+    </div>
+  );
+}

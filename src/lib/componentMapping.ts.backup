@@ -1,0 +1,71 @@
+/**
+ * Central repository of Visa Nova React component snippets.
+ * Each entry is a template string containing:
+ *  1. A single import line   (index 0)
+ *  2. One or more JSX lines  (index 1…)
+ */
+export const componentSnippets = {
+  // ---------- Basic form ----------
+  Input: `import { Input, InputContainer, Label, Utility } from '@visa/nova-react';
+<Utility vFlex vFlexCol vGap={4}>
+  <Label htmlFor="input">Label</Label>
+  <InputContainer>
+    <Input id="input" type="text" />
+  </InputContainer>
+</Utility>`,
+
+  Button: `import { Button } from '@visa/nova-react';
+<Button>Primary action</Button>`,
+
+  Checkbox: `import { Checkbox, Label, Utility } from '@visa/nova-react';
+<Utility vFlex vAlignItems="center" vGap={2}>
+  <Checkbox id="remember" />
+  <Label htmlFor="remember">Remember Me</Label>
+</Utility>`,
+
+  // ---------- Layout ----------
+  ContentCard: `import { ContentCard, ContentCardBody, ContentCardTitle } from '@visa/nova-react';
+<ContentCard>
+  <ContentCardBody>
+    <ContentCardTitle variant="headline-4">Headline</ContentCardTitle>
+  </ContentCardBody>
+</ContentCard>`,
+
+  Divider: `import { Divider } from '@visa/nova-react';
+<Divider />`,
+
+  Banner: `import { Banner } from '@visa/nova-react';
+<Banner />`,
+
+  // ---------- Info / navigation ----------
+  Accordion: `import { Accordion, AccordionHeading, AccordionPanel, AccordionToggleIcon, Typography } from '@visa/nova-react';
+<Accordion>
+  <AccordionHeading><AccordionToggleIcon />Accordion title</AccordionHeading>
+  <AccordionPanel><Typography>Accordion content</Typography></AccordionPanel>
+</Accordion>`,
+
+  Avatar: `import { Avatar } from '@visa/nova-react';
+<Avatar alt="Alex Miller" small tag="img" src="/alex-miller-stock.png" />`,
+
+  Dialog: `import { Dialog, DialogHeader, DialogContent, Button, useFocusTrap } from '@visa/nova-react';
+const { ref } = useFocusTrap();
+<>
+  <Button onClick={() => ref.current?.showModal()}>Open dialog</Button>
+  <Dialog id="dlg" ref={ref}>
+    <DialogContent><DialogHeader>Hello</DialogHeader></DialogContent>
+  </Dialog>
+</>`,
+} as const;
+
+export type ComponentName = keyof typeof componentSnippets;
+
+/** Keyword → component mapping */
+export const keywordMap: Record<string, ComponentName[]> = {
+  login: ['Input', 'Input', 'Checkbox', 'Button'],
+  signup: ['Input', 'Input', 'Input', 'Button'],
+  profile: ['Avatar', 'ContentCard', 'Button'],
+  dashboard: ['Banner', 'ContentCard', 'Divider'],
+};
+
+/** Fallback components if no keyword matched. */
+export const fallbackComponents: ComponentName[] = ['Input', 'Button']; 

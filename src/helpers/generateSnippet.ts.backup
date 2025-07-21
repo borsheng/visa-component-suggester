@@ -1,0 +1,56 @@
+import { componentSnippets, ComponentName } from '../lib/componentMapping';
+
+interface ParsedSnippet {
+  imports: Set<string>;
+  jsx: string[];
+}
+
+/**
+ * Parses a component snippet into separate import and JSX parts
+ */
+function parseSnippet(snippet: string): ParsedSnippet {
+  const [importLine, ...jsxLines] = snippet.split('\n');
+  return {
+    imports: new Set([importLine]),
+    jsx: jsxLines,
+  };
+}
+
+/**
+ * Generates a complete code snippet from a list of component names
+ * Handles import deduplication and proper formatting
+ */
+export function generateSnippet(components: ComponentName[]): string {
+  const result: ParsedSnippet = {
+    imports: new Set<string>(),
+    jsx: [],
+  };
+
+  // Process each component
+  components.forEach((name) => {
+    const snippet = componentSnippets[name];
+    const parsed = parseSnippet(snippet);
+    
+    // Add imports and JSX
+    parsed.imports.forEach((imp) => result.imports.add(imp));
+    result.jsx.push(...parsed.jsx);
+  });
+
+  // Combine imports by merging from @visa/nova-react
+  const mergedImports = Array.from(result.imports)
+    .filter(line => line.includes('@visa/nova-react'))
+    .map(line => line.match(/\{([^}]+)\}/)?.[1].split(',').map(s => s.trim()))
+    .flat()
+    .filter(Boolean);
+
+  const finalImport = mergedImports.length > 0
+    ? `import { ${Array.from(new Set(mergedImports)).sort().join(', ')} } from '@visa/nova-react';`
+    : '';
+
+  // Combine everything
+  return [
+    finalImport,
+    '',
+    ...result.jsx,
+  ].filter(Boolean).join('\n');
+} 
