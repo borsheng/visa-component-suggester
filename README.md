@@ -2,7 +2,7 @@
 
 A natural language to Visa Product Design System component suggestion tool with real-time code generation and usage analytics.
 
-**Live Demo**: [Deploy to Vercel to get your URL](https://vercel.com)
+**Live Demo**: https://visa-component-suggester-jz17sg2su-erics-projects-9371e036.vercel.app
 
 ## 📋 Overview
 
@@ -27,7 +27,7 @@ Developers describe UI requirements in natural language (e.g., "responsive login
 - Clean UI with Visa branding and accessibility features
 
 **Bonus Features**:
-- Search analytics dashboard with popular queries
+- Search analytics dashboard with popular queries (Full-stack)
 - Favorites system and copy-to-clipboard functionality
 - Responsive design and full TypeScript coverage
 
@@ -44,7 +44,7 @@ npm install && npm run dev
 
 **Component Scope**: Focused on 28 most common Visa Nova components rather than exhaustive coverage.
 
-**Search Algorithm**: Deterministic keyword matching vs. AI-powered semantic search for reliability and time constraints.
+**Search Algorithm**: Rule-based keyword mapping with deterministic matching (chosen over AI-powered semantic search for reliability and time constraints)
 
 ## 🚀 Production Improvements
 
@@ -52,19 +52,18 @@ npm install && npm run dev
 
 **Enhanced Intelligence**: Semantic search with embeddings, ML-based suggestion improvement, component relationship mapping
 
-**Advanced Features**: Live component preview, IDE integration, A/B testing, advanced analytics
+**Advanced Features**: Live component preview, IDE integration, advanced analytics
 
 ## 🤖 AI Usage
 
-Used **Cursor AI assistant** for code structure suggestions, debugging, and responsive design optimization. Core architecture and business logic were my own decisions.
+Used **Cursor AI assistant** for code structure suggestions, debugging, and responsive design optimization. Core architecture, UI design, and business logic were my own creative decisions.
 
 ## 📊 Project Stats
 
 - **28 Visa Nova Components** mapped
-- **100% TypeScript** coverage  
 - **Mobile responsive** with accessibility features
 - **~4 hours** development time
 
 ---
 
-**Built by Eric Huang** | Visa Take-Home Assignment
+**Built by Eric Huang**
